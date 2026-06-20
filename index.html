@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV_GAME_PROJECT // BRONZE_CORE INITIALIZATION</title>
+    <style>
+        :root {
+            /* Metallic Bronze Palette */
+            --br-deep: #1a0f05;     
+            --br-panel: #1c1917;    
+            --br-border: #44403c;   
+            --br-base: #b87333;     
+            --br-accent: #cd7f32;   
+            --br-highlight: #ffcca3; 
+            
+            --bg: #0c0a09;          
+            --text-main: #fafaf9;
+            --text-muted: #78716c;
+            
+            --glow: rgba(205, 127, 50, 0.2);
+            --glow-strong: rgba(255, 204, 163, 0.4);
+            --glow-intense: rgba(255, 204, 163, 0.7);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ---------------- Dynamic Parallax Background ---------------- */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(205, 127, 50, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(255, 204, 163, 0.05) 0%, transparent 40%),
+                linear-gradient(rgba(68, 64, 60, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(68, 64, 60, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            transition: transform 0.1s linear;
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .particle {
+            position: absolute;
+            background: var(--br-accent);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatUp 15s infinite linear;
+        }
+
+        /* ---------------- Navigation ---------------- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: rgba(12, 10, 9, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(205, 127, 50, 0.2);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            box-sizing: border-box;
+            z-index: 1000;
+            transition: padding 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 12px 40px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.8);
+            border-bottom: 1px solid var(--br-accent);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pulse-beacon {
+            width: 8px;
+            height: 8px;
+            background-color: var(--br-highlight);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--br-highlight);
+            animation: beaconFlash 2s infinite ease-in-out;
+        }
+
+        .brand-text {
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        .btn-launch {
+            background: linear-gradient(135deg, #2e2a24 0%, #1c1917 100%);
+            border: 1px solid var(--br-accent);
+            color: var(--br-highlight);
+            padding: 10px 24px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 0 15px var(--glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-launch::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 204, 163, 0.4), transparent);
+            transition: all 0.4s ease;
+        }
+
+        .btn-launch:hover::after {
+            left: 100%;
+        }
+
+        .btn-launch:hover {
+            box-shadow: 0 0 30px var(--glow-strong);
+            border-color: #ffffff;
+            transform: scale(1.02);
+        }
+
+        /* ---------------- Hero Section ---------------- */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 160px 40px 100px 40px;
+            min-height: 85vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-content {
+            flex: 1;
+            max-width: 650px;
+        }
+
+        .sys-badge {
+            display: inline-block;
+            font-size: 10px;
+            color: var(--br-accent);
+            border: 1px solid var(--br-accent);
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+            background: rgba(205, 127, 50, 0.05);
+            box-shadow: 0 0 10px var(--glow);
+        }
+
+        .hero h1 {
+            font-size: 64px;
+            line-height: 1.05;
+            margin: 0 0 24px 0;
+            font-weight: 900;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 40px rgba(255, 204, 163, 0.3);
+        }
+
+        .hero h1 span {
+            background: linear-gradient(to right, var(--br-base), var(--br-highlight));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin: 0 0 40px 0;
+            max-width: 500px;
+        }
+
+        /* ---------------- Mouse-Tracking Interactive 3D Core ---------------- */
+        .hero-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px;
+            height: 500px;
+        }
+
+        .core-tracker {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .core-rotator {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: slowMatrixSpin 25s linear infinite;
+        }
+
+        .core-ring {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            border: 1px solid rgba(205, 127, 50, 0.3);
+            box-shadow: 0 0 15px rgba(205, 127, 50, 0.1);
+        }
+
+        .ring-1 { transform: rotateX(90deg); border: 2px solid var(--br-base); }
+        .ring-2 { transform: rotateY(90deg); border: 2px dashed var(--br-accent); }
+        .ring-3 { transform: rotateZ(45deg) rotateX(45deg); border: 1px solid var(--br-highlight); opacity: 0.5; }
+        .ring-4 { transform: rotateZ(-45deg) rotateY(45deg); border: 1px solid var(--br-highlight); opacity: 0.5; }
+        .ring-5 { transform: scale(0.6) rotateX(45deg); border: 3px solid var(--br-accent); box-shadow: 0 0 30px var(--glow-strong); }
+        .ring-6 { transform: scale(0.3) rotateY(45deg); border: 2px dashed #ffffff; animation: reverseSpin 10s linear infinite; }
+
+        .core-center {
+            position: absolute;
+            top: calc(50% - 15px); left: calc(50% - 15px);
+            width: 30px; height: 30px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 40px var(--br-highlight), 0 0 80px var(--br-accent);
+            animation: throb 1.5s infinite alternate;
+        }
+
+        /* ---------------- Live Telemetry Stream Strip ---------------- */
+        .telemetry-section {
+            background: #090706;
+            border-top: 1px solid var(--br-border);
+            border-bottom: 1px solid var(--br-border);
+            padding: 15px 40px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 11px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 10;
+        }
+
+        .telemetry-label {
+            color: #eab308;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .telemetry-console {
+            flex: 1;
+            height: 18px;
+            overflow: hidden;
+            position: relative;
+            color: #22c55e;
+            opacity: 0.8;
+        }
+
+        .telemetry-lines {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: transform 0.2s ease-out;
+        }
+
+        .telemetry-line { padding: 2px 0; }
+
+        /* ---------------- Scroll Reveal Features Section ---------------- */
+        .features-section {
+            padding: 120px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .section-header h2 {
+            font-size: 32px;
+            color: var(--text-main);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            color: var(--br-accent);
+            font-size: 12px;
+            letter-spacing: 3px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.3s; }
+        .delay-3 { transition-delay: 0.5s; }
+
+        .feature-card {
+            background: rgba(28, 25, 23, 0.6);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--br-border);
+            padding: 40px;
+            border-radius: 8px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--br-highlight);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8), 0 0 25px var(--glow);
+            background: rgba(28, 25, 23, 0.9);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 25px;
+            display: inline-block;
+            filter: drop-shadow(0 0 10px var(--br-accent));
+        }
+
+        .feature-card h3 {
+            font-size: 18px;
+            color: var(--br-highlight);
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ---------------- Call to Action Footer ---------------- */
+        .cta-section {
+            background: linear-gradient(0deg, #000000 0%, var(--bg) 100%);
+            padding: 100px 40px 60px 40px;
+            text-align: center;
+            border-top: 1px solid var(--br-border);
+            position: relative;
+            z-index: 10;
+        }
+
+        .cta-section h2 {
+            font-size: 36px;
+            margin-bottom: 40px;
+            color: #ffffff;
+            text-shadow: 0 0 20px var(--glow-strong);
+        }
+
+        .footer-metrics {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px dashed var(--br-border);
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* ---------------- Animations ---------------- */
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            20% { opacity: 0.5; }
+            80% { opacity: 0.5; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+        @keyframes beaconFlash {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 20px var(--br-highlight); }
+        }
+        @keyframes slowMatrixSpin {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+        @keyframes reverseSpin {
+            0% { transform: rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateY(-360deg) rotateZ(-360deg); }
+        }
+        @keyframes throb {
+            0% { transform: scale(0.9); }
+            100% { transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="particles" id="particles"></div>
+    <div class="parallax-bg" id="parallax-bg"></div>
+
+    <nav id="navbar">
+        <div class="brand-container">
+            <div class="pulse-beacon"></div>
+            <div class="brand-text">DEV_GAME_PROJECT // MATRIX</div>
+        </div>
+        <a href="app.html" class="btn-launch">BOOT TERMINAL ↗</a>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="sys-badge">SYSTEM REBOOT: DEV_GAME_PROJECT ACTIVE</div>
+            <h1>
+                INTELLIGENCE. 
+                <span>AGGREGATED.</span>
+            </h1>
+            <p>
+                Bypass consumer-grade interfaces. Access the raw Hacker News data pipeline through a high-performance, 3D hardware-accelerated tracking matrix designed for elite developers.
+            </p>
+            <a href="app.html" class="btn-launch" style="padding: 16px 36px; font-size: 15px; letter-spacing: 1px;">ENTER THE MATRIX_GRID ↗</a>
+            
+            <div class="data-strip">
+                <div class="data-item">
+                    <span class="data-value">500+</span>
+                    <span class="data-label">Live Nodes</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-value">0ms</span>
+                    <span class="data-label">Filter Latency</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-value">REST</span>
+                    <span class="data-label">Core Pipeline</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="core-tracker" id="core-tracker">
+                <div class="core-rotator">
+                    <div class="core-ring ring-1"></div>
+                    <div class="core-ring ring-2"></div>
+                    <div class="core-ring ring-3"></div>
+                    <div class="core-ring ring-4"></div>
+                    <div class="core-ring ring-5"></div>
+                    <div class="core-ring ring-6"></div>
+                    <div class="core-center"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="telemetry-section">
+        <div class="telemetry-label">SYS_LOG_TICK:</div>
+        <div class="telemetry-console">
+            <div class="telemetry-lines" id="telemetry-lines">
+                <div class="telemetry-line">> Awaiting user handshake...</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <div class="section-header reveal">
+            <h2>SYSTEM ARCHITECTURE</h2>
+            <p>CORE MODULES DEPLOYED IN BUILD V2.0</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card reveal delay-1">
+                <div class="feature-icon">⚙️</div>
+                <h3>Live API Telemetry</h3>
+                <p>Hooks directly into Algolia search endpoints to pull concurrent arrays. Watch trending engineering data points compile instantly without standard pagination limits.</p>
+            </div>
+            
+            <div class="feature-card reveal delay-2">
+                <div class="feature-icon">🔍</div>
+                <h3>Real-Time Engine</h3>
+                <p>Zero-latency client-side string filtering. Execute keyword parsing algorithms instantly across the entire cache to isolate stack deployments like React, Rust, or Python.</p>
+            </div>
+            
+            <div class="feature-card reveal delay-3">
+                <div class="feature-icon">💾</div>
+                <h3>Data Harvesting</h3>
+                <p>Extract and log critical array fragments into your local manifest sidebar. The system tracks metrics, calculates read times, and dynamically upgrades system ranks.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section reveal">
+        <h2>READY TO OVERRIDE THE FEED?</h2>
+        <a href="app.html" class="btn-launch" style="padding: 18px 40px; font-size: 16px;">INITIALIZE TERMINAL SEQUENCE</a>
+        
+        <div class="footer-metrics">
+            <span>PROJECT: DEV_GAME_PROJECT</span>
+            <span>ENCRYPTION: AES-256-GCM</span>
+            <span>SERVER: US-WEST-ORBITAL</span>
+        </div>
+    </section>
+
+    <script>
+        // 1. Mouse Tracking 3D Core Node Logic
+        const tracker = document.getElementById('core-tracker');
+        
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 20; 
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 20;
+            tracker.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        document.addEventListener('mouseleave', () => {
+            tracker.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
+
+        // 2. Scroll Reveal Intersection Observer
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealOptions = {
+            threshold: 0.15,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    return;
+                } else {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+
+        revealElements.forEach(el => revealOnScroll.observe(el));
+
+        // 3. Parallax Background & Navbar Blur on Scroll
+        const parallaxBg = document.getElementById('parallax-bg');
+        const navbar = document.getElementById('navbar');
+
+        window.addEventListener('scroll', () => {
+            let scrollY = window.scrollY;
+            parallaxBg.style.transform = `translateY(${scrollY * 0.3}px)`;
+
+            if (scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 4. Live Simulated Telemetry Stream
+        const telemetryConsole = document.getElementById('telemetry-lines');
+        const logMessages = [
+            "Bypassing standard pagination rules...",
+            "Connecting to orbital server cluster US-W...",
+            "Downloading 500-node matrix manifest...",
+            "Resolving dynamic framework dependencies...",
+            "Calculating metallic render pipelines...",
+            "Syncing telemetry caches...",
+            "Handshake verified. Awaiting deployment command..."
+        ];
+
+        setInterval(() => {
+            const randomMsg = logMessages[Math.floor(Math.random() * logMessages.length)];
+            const time = new Date().toISOString().split('T')[1].slice(0,8);
+            
+            const newLine = document.createElement('div');
+            newLine.className = 'telemetry-line';
+            newLine.innerText = `> [${time}] ${randomMsg}`;
+            
+            telemetryConsole.appendChild(newLine);
+            
+            if (telemetryConsole.children.length > 3) {
+                telemetryConsole.removeChild(telemetryConsole.firstChild);
+            }
+        }, 1500);
+
+        // 5. Generate Floating Background Particles
+        const particleContainer = document.getElementById('particles');
+        const particleCount = 20;
+
+        for (let i = 0; i < particleCount; i++) {
+            let particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            let size = Math.random() * 4 + 2;
+            let leftPos = Math.random() * 100;
+            let animDelay = Math.random() * 15;
+            
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${leftPos}%`;
+            particle.style.animationDelay = `-${animDelay}s`;
+            
+            particleContainer.appendChild(particle);
+        }
+    </script>
+</body>
+</html>
